@@ -16,8 +16,8 @@
         <h2 class="mb-3">login to your account</h2>
         
     <div class="form-floating mb-3">
-        <input type="text" class="form-control" id="username" placeholder="your username">
-        <label for="floatingInput">username</label>
+        <input type="email" class="form-control" id="email" placeholder="your email adress">
+        <label for="floatingInput">email</label>
       </div>
       <div class="form-floating mb-3">
         <input type="password" class="form-control" id="password" placeholder="Password">
@@ -51,19 +51,19 @@
         const auth = getAuth(app);
         const dbref = ref(db);
 
-        let username = document.getElementById('username');
+        let email = document.getElementById('email');
         let password = document.getElementById('password');
         let mainform = document.getElementById('MainForm');
 
         let login = evt =>{
             evt.preventDefault();
 
-            signInWithEmailAndPassword(auth, username.value, password.value)
+            signInWithEmailAndPassword(auth, email.value, password.value)
             .then((credentials)=>{
-                get(child(dbref, 'daftarPengguna'+ credentials.user.uid)).then((snapshot)=>{
+                get(child(dbref, 'datapengguna'+ credentials.user.uid)).then((snapshot)=>{
                     if(snapshot.exist){
                         sessionStorage.setItem("user-info", JSON.stringify({
-                            username: snapshot.val().username
+                            email:snapshot.val().email
                         }))
                         sessionStorage.setItem("user-creds", JSON.stringify(credentials.user));
                         window.location.href='listUser.html';
