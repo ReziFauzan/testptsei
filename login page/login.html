@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <title>login</title>
+  </head>
+  <body>
+
+    <form id="MainForm" class="w-25 m-4">
+        <h2 class="mb-3">login to your account</h2>
+        
+    <div class="form-floating mb-3">
+        <input type="text" class="form-control" id="username" placeholder="your username">
+        <label for="floatingInput">username</label>
+      </div>
+      <div class="form-floating mb-3">
+        <input type="password" class="form-control" id="password" placeholder="Password">
+        <label for="floatingPassword">Password</label>
+      </div>
+
+      <button type = "submit" class="btn btn-primary" style="float: right;">login</button>
+      <a href="tambahUser.html"><button type = "button" style="float: right;" class="btn btn-primary me-2">sign up</button></a>
+
+    </form>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script type="module">
+
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, get, ref, child } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyBlS6JNR02sxdYfHIH9KwLDrU53nd44b9c",
+          authDomain: "testptsei.firebaseapp.com",
+          databaseURL: "https://testptsei-default-rtdb.asia-southeast1.firebasedatabase.app",
+          projectId: "testptsei",
+          storageBucket: "testptsei.appspot.com",
+          messagingSenderId: "631475386556",
+          appId: "1:631475386556:web:243fb7ad7e2b1aef9878b9"
+        };
+      //menyamakan data dari firebase database
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase();
+        const auth = getAuth(app);
+        const dbref = ref(db);
+
+        let username = document.getElementById('username');
+        let password = document.getElementById('password');
+        let mainform = document.getElementById('MainForm');
+
+        let login = evt =>{
+            evt.preventDefault();
+
+            signInWithEmailAndPassword(auth, username.value, password.value)
+            .then((credentials)=>{
+                get(child(dbref, 'daftarPengguna'+ credentials.user.uid)).then((snapshot)=>{
+                    if(snapshot.exist){
+                        sessionStorage.setItem("user-info", JSON.stringify({
+                            username: snapshot.val().username
+                        }))
+                        sessionStorage.setItem("user-creds", JSON.stringify(credentials.user));
+                        window.location.href='listUser.html';
+                    }
+                })
+            })
+            .catch((error)=>{
+                alert(error.message);
+                console.log(error.code);
+                console.log(error.message);
+            })
+        }
+
+        mainform.addEventListener('submit', login);
+      </script>
+  </body>
+</html>
